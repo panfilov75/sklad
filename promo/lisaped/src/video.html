@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Лисапед — промо</title>
+<style>
+@font-face { font-family: M; font-weight: 800; font-style: normal; src: url(../fonts/montserrat-cyrillic-800-normal.woff2); unicode-range: U+0400-04FF; }
+@font-face { font-family: M; font-weight: 800; font-style: normal; src: url(../fonts/montserrat-latin-800-normal.woff2); unicode-range: U+0000-03FF, U+2000-20CF; }
+@font-face { font-family: M; font-weight: 900; font-style: normal; src: url(../fonts/montserrat-cyrillic-900-normal.woff2); unicode-range: U+0400-04FF; }
+@font-face { font-family: M; font-weight: 900; font-style: normal; src: url(../fonts/montserrat-latin-900-normal.woff2); unicode-range: U+0000-03FF, U+2000-20CF; }
+@font-face { font-family: M; font-weight: 900; font-style: italic; src: url(../fonts/montserrat-cyrillic-900-italic.woff2); unicode-range: U+0400-04FF; }
+@font-face { font-family: M; font-weight: 900; font-style: italic; src: url(../fonts/montserrat-latin-900-italic.woff2); unicode-range: U+0000-03FF, U+2000-20CF; }
+
+:root { --or: #FF6A00; --or2: #F24E00; --yel: #FFD43B; --ink: #2A2320; --grn: #22B24C; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--or); font-family: M, sans-serif; }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+.scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+/* элемент позиционируется центром в (left, top); анимация — через transform */
+.c { position: absolute; transform: translate(-50%, -50%); will-change: transform, opacity; white-space: nowrap; }
+img.c { display: block; }
+
+.bg-orange { position: absolute; inset: -10%; background: radial-gradient(circle at 50% 42%, #FF9A2E 0%, #FF7410 38%, #F25200 100%); }
+.rays { position: absolute; left: 50%; top: 42%; width: 3200px; height: 3200px; margin: -1600px 0 0 -1600px;
+  background: repeating-conic-gradient(rgba(255,255,255,.10) 0deg 9deg, rgba(255,255,255,0) 9deg 22.5deg);
+  -webkit-mask: radial-gradient(circle, #000 0 18%, transparent 62%); mask: radial-gradient(circle, #000 0 18%, transparent 62%); }
+.bg-dark { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, #4A5468 0%, #2B303C 55%, #1C1F27 100%); }
+
+.h { font-weight: 900; font-style: italic; color: #fff; letter-spacing: -1px; line-height: .95; text-align: center;
+  text-shadow: 0 8px 0 rgba(150, 40, 0, .35), 0 18px 40px rgba(120, 30, 0, .35); }
+.h.dark { text-shadow: 0 8px 0 rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.4); }
+.label { background: #fff; color: var(--or); border-radius: 28px; padding: 18px 40px 22px; font-weight: 900; font-style: italic;
+  box-shadow: 0 16px 0 rgba(170, 50, 0, .35), 0 30px 60px rgba(120, 30, 0, .35); }
+.pill { background: var(--or2); color: #fff; border-radius: 999px; padding: 16px 44px 20px; font-weight: 900; font-style: italic; border: 6px solid #fff;
+  box-shadow: 0 14px 30px rgba(120, 30, 0, .35); }
+.chip { background: #fff; color: var(--ink); border-radius: 999px; padding: 18px 40px 20px 26px; font-weight: 800; font-size: 54px;
+  display: flex; align-items: center; gap: 18px; box-shadow: 0 14px 30px rgba(120, 30, 0, .3); }
+.chip i { width: 54px; height: 54px; border-radius: 50%; background: var(--grn); display: grid; place-items: center; }
+.chip i::after { content: ""; width: 22px; height: 12px; border: solid #fff; border-width: 0 0 7px 7px; transform: translateY(-3px) rotate(-45deg); }
+.shadow { filter: drop-shadow(0 30px 40px rgba(110, 30, 0, .45)); }
+.particle { position: absolute; left: 0; top: 0; border-radius: 50%; }
+
+/* холодильник */
+.fridge { width: 560px; height: 960px; perspective: 1800px; }
+.fridge .body { position: absolute; inset: 0; border-radius: 40px; background: linear-gradient(90deg, #C9D1DC, #EEF2F6 30%, #DCE2EA); box-shadow: 0 40px 80px rgba(0,0,0,.5); }
+.fridge .inside { position: absolute; inset: 26px; border-radius: 22px; background: radial-gradient(circle at 50% 18%, #FFFFFF 0%, #DDEBFA 45%, #A9BFD6 100%); overflow: hidden; }
+.fridge .shelf { position: absolute; left: 6%; right: 6%; height: 14px; border-radius: 7px; background: rgba(255,255,255,.75); box-shadow: 0 6px 10px rgba(60,90,130,.25); }
+.fridge .lamp { position: absolute; left: 50%; top: 18px; width: 140px; height: 18px; margin-left: -70px; border-radius: 9px; background: #fff; box-shadow: 0 0 60px 30px rgba(255,255,255,.9); }
+.fridge .door { position: absolute; inset: 0; border-radius: 40px; transform-origin: 0 50%; background: linear-gradient(90deg, #E9EDF2, #FFFFFF 40%, #E3E8EE); box-shadow: inset 0 0 0 4px rgba(0,0,0,.04); backface-visibility: hidden; }
+.fridge .door::before { content: ""; position: absolute; left: 0; right: 0; top: 34%; height: 6px; background: rgba(0,0,0,.08); }
+.fridge .handle { position: absolute; right: 44px; top: 12%; width: 22px; height: 160px; border-radius: 11px; background: linear-gradient(90deg, #AEB7C3, #E4E9EF); }
+.fridge .handle.b { top: 42%; height: 220px; }
+.fly { width: 30px; height: 18px; border-radius: 50%; background: #333; }
+.fly::before, .fly::after { content: ""; position: absolute; top: -12px; width: 18px; height: 14px; border-radius: 50%; background: rgba(200,220,255,.8); }
+.fly::before { left: 0; } .fly::after { right: 0; }
+
+/* секундомер */
+.watch { width: 560px; height: 560px; }
+.watch svg { width: 100%; height: 100%; overflow: visible; }
+
+/* купон */
+.coupon { display: flex; height: 170px; border-radius: 26px; background: var(--yel); color: var(--ink); font-weight: 900; box-shadow: 0 18px 0 rgba(170, 90, 0, .45), 0 30px 60px rgba(120, 40, 0, .4); overflow: hidden; }
+.coupon > div { display: grid; place-items: center; padding: 0 44px; }
+.coupon .k { font-size: 42px; font-weight: 800; letter-spacing: 2px; border-right: 8px dashed rgba(42, 35, 32, .35); }
+.coupon .v { font-size: 86px; font-style: italic; }
+
+.badge-store { height: 128px; border-radius: 22px; box-shadow: 0 16px 34px rgba(80, 20, 0, .4); }
+.tap { width: 150px; height: 150px; border-radius: 50%; border: 10px solid #fff; background: rgba(255,255,255,.25); }
+.plus { width: 96px; height: 96px; border-radius: 50%; background: var(--grn); color: #fff; font-weight: 900; font-size: 48px; display: grid; place-items: center; box-shadow: 0 10px 20px rgba(0,0,0,.25); }
+.flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.skyline { position: absolute; left: 0; right: 0; bottom: 0; height: 520px; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1. Хук: «Краснокаменск, внимание!» -->
+  <div class="scene" id="s1">
+    <div class="bg-orange"></div>
+    <div class="rays" id="s1rays"></div>
+    <svg class="skyline" id="s1sky" viewBox="0 0 1080 520" preserveAspectRatio="none"></svg>
+    <div class="c" id="s1pin" style="left:540px;top:520px">
+      <svg width="200" height="260" viewBox="0 0 100 130"><path d="M50 4 C24 4 6 23 6 48 C6 80 50 126 50 126 C50 126 94 80 94 48 C94 23 76 4 50 4 Z" fill="#fff"/><circle cx="50" cy="48" r="18" fill="#FF6A00"/></svg>
+    </div>
+    <div class="c label" id="s1city" style="left:540px;top:820px;font-size:84px;">КРАСНОКАМЕНСК,</div>
+    <div class="c h" id="s1att" style="left:540px;top:1040px;font-size:148px;color:var(--yel)">ВНИМАНИЕ!</div>
+    <div class="c pill" id="s1first" style="left:540px;top:1250px;font-size:52px;">впервые в нашем городе</div>
+  </div>
+
+  <!-- 2. Проблема: пустой холодильник -->
+  <div class="scene" id="s2">
+    <div class="bg-dark"></div>
+    <div class="c h dark" id="s2t1" style="left:540px;top:300px;font-size:104px;">ХОЛОДИЛЬНИК<br>ПУСТОЙ?</div>
+    <div class="c fridge" id="s2fridge" style="left:540px;top:1060px;">
+      <div class="body"></div>
+      <div class="inside">
+        <div class="lamp" id="s2lamp"></div>
+        <div class="shelf" style="top:26%"></div><div class="shelf" style="top:50%"></div><div class="shelf" style="top:74%"></div>
+      </div>
+      <div class="door" id="s2door"><div class="handle"></div><div class="handle b"></div></div>
+    </div>
+    <div class="c fly" id="s2fly" style="left:540px;top:1000px"></div>
+    <div class="c h dark" id="s2t2" style="left:540px;top:1700px;font-size:84px;color:var(--yel)">А В МАГАЗИН — ЛЕНЬ?</div>
+  </div>
+
+  <!-- 3. Решение: Лисапед, до квартиры, от 15 минут -->
+  <div class="scene" id="s3">
+    <div class="bg-orange"></div>
+    <div class="rays" id="s3rays"></div>
+    <div id="s3burst"></div>
+    <img class="c shadow" id="s3icon" src="logo.svg" style="left:540px;top:760px;width:520px">
+    <img class="c" id="s3word" src="../assets/cut/logo_word.png" style="left:540px;top:1180px;width:640px;filter:drop-shadow(0 8px 0 rgba(150,40,0,.35))">
+    <img class="c shadow" id="s3pack" src="../assets/cut/backpack.png" style="left:540px;top:820px;width:760px">
+    <svg class="c" id="s3speed" style="left:540px;top:820px" width="1400" height="900" viewBox="0 0 1400 900"></svg>
+    <div class="c label" id="s3to" style="left:540px;top:1380px;font-size:78px;">ДО КВАРТИРЫ</div>
+    <div class="c watch" id="s3watch" style="left:540px;top:1000px">
+      <svg viewBox="-150 -170 300 320">
+        <rect x="-22" y="-168" width="44" height="30" rx="8" fill="#fff"/>
+        <rect x="-8" y="-146" width="16" height="22" fill="#fff"/>
+        <circle r="128" fill="#fff"/>
+        <circle r="108" fill="none" stroke="#FFE0C7" stroke-width="18"/>
+        <circle id="s3arc" r="108" fill="none" stroke="#FF6A00" stroke-width="18" stroke-linecap="round" transform="rotate(-90)" stroke-dasharray="678.6" stroke-dashoffset="678.6"/>
+        <text id="s3num" y="34" text-anchor="middle" font-family="M" font-weight="900" font-style="italic" font-size="118" fill="#FF6A00">60</text>
+      </svg>
+    </div>
+    <div class="c h" id="s3ot" style="left:540px;top:560px;font-size:110px;">ОТ 15 МИНУТ</div>
+    <div class="c pill" id="s3min" style="left:440px;top:1420px;font-size:58px;">доставка до двери</div>
+  </div>
+
+  <!-- 4. Ассортимент и цены -->
+  <div class="scene" id="s4">
+    <div class="bg-orange"></div>
+    <div class="rays" id="s4rays"></div>
+    <img class="c shadow" id="s4bag" src="../assets/cut/bag_orange.png" style="left:640px;top:960px;width:620px">
+    <div class="c chip" id="s4c1" style="left:250px;top:420px"><i></i>Овощи</div>
+    <div class="c chip" id="s4c2" style="left:250px;top:580px"><i></i>Фрукты</div>
+    <div class="c chip" id="s4c3" style="left:250px;top:740px"><i></i>Молоко</div>
+    <div class="c chip" id="s4c4" style="left:250px;top:900px"><i></i>Свежий хлеб</div>
+    <img class="c shadow" id="s4food" src="../assets/cut/groceries.png" style="left:300px;top:1300px;width:640px">
+    <img class="c shadow" id="s4brands" src="../assets/cut/brands.png" style="left:540px;top:1720px;width:1100px">
+    <div class="c label" id="s4price" style="left:540px;top:330px;font-size:76px;text-align:center;line-height:1.05">ЦЕНЫ КАК<br>В МАГАЗИНЕ</div>
+  </div>
+
+  <!-- 5. Приложение -->
+  <div class="scene" id="s5">
+    <div class="bg-orange"></div>
+    <div class="rays" id="s5rays"></div>
+    <div class="c h" id="s5t" style="left:540px;top:290px;font-size:96px;">ЗАКАЗ<br>В ПАРУ КАСАНИЙ</div>
+    <img class="c shadow" id="s5phone" src="../assets/cut/phone_app.png" style="left:540px;top:1180px;width:660px">
+    <div class="c tap" id="s5tap1" style="left:400px;top:1060px"></div>
+    <div class="c tap" id="s5tap2" style="left:530px;top:1270px"></div>
+    <div class="c plus" id="s5p1" style="left:400px;top:1060px">+1</div>
+    <div class="c plus" id="s5p2" style="left:530px;top:1270px">+1</div>
+  </div>
+
+  <!-- 6. Промокод -->
+  <div class="scene" id="s6">
+    <div class="bg-orange"></div>
+    <div class="rays" id="s6rays"></div>
+    <div id="s6conf"></div>
+    <div class="c label" id="s6sale" style="left:540px;top:430px;font-size:84px;">СКИДКА</div>
+    <div class="c h" id="s6first" style="left:540px;top:900px;font-size:80px;">НА ПЕРВЫЙ ЗАКАЗ</div>
+    <div class="c h" id="s6sum" style="left:540px;top:670px;font-size:300px;color:var(--yel);letter-spacing:-8px">−300₽</div>
+    <div class="c coupon" id="s6coupon" style="left:540px;top:1120px"><div class="k">ПРОМОКОД</div><div class="v">ЛИСАПЕД</div></div>
+    <div class="c" id="s6note" style="left:540px;top:1290px;font-weight:800;font-size:44px;color:#fff;opacity:.95">при заказе от 2000 ₽</div>
+  </div>
+
+  <!-- 7. CTA -->
+  <div class="scene" id="s7">
+    <div class="bg-orange"></div>
+    <div class="rays" id="s7rays"></div>
+    <img class="c shadow" id="s7icon" src="logo.svg" style="left:300px;top:250px;width:250px">
+    <img class="c" id="s7word" src="../assets/cut/logo_word.png" style="left:690px;top:280px;width:520px;filter:drop-shadow(0 6px 0 rgba(150,40,0,.35))">
+    <div class="c h" id="s7t" style="left:540px;top:520px;font-size:92px;">СКАЧИВАЙ<br>ПРИЛОЖЕНИЕ</div>
+    <img class="c shadow" id="s7phone" src="../assets/cut/hand_phone.png" style="left:540px;top:1030px;width:330px">
+    <img class="c badge-store" id="s7gp" src="../assets/cut/badge_gplay.png" style="left:290px;top:1400px">
+    <img class="c badge-store" id="s7as" src="../assets/cut/badge_appstore.png" style="left:790px;top:1400px">
+    <div class="c coupon" id="s7coupon" style="left:540px;top:1590px;height:110px;border-radius:20px"><div class="k" style="font-size:30px;padding:0 30px">−300 ₽ ПО ПРОМОКОДУ</div><div class="v" style="font-size:56px;padding:0 30px">ЛИСАПЕД</div></div>
+    <div class="c" id="s7city" style="left:540px;top:1740px;font-weight:800;font-size:40px;color:#fff">Доставка по Краснокаменску · от 15 минут</div>
+  </div>
+
+  <div class="flash" id="flash"></div>
+</div>
+
+<script>
+// ---------- утилиты ----------
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const E = {
+  lin: x => x,
+  out: x => 1 - Math.pow(1 - x, 3),
+  in: x => x * x * x,
+  io: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  back: x => { const c = 2.2; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); },
+  el: x => x === 0 || x === 1 ? x : Math.pow(2, -10 * x) * Math.sin((x * 10 - .75) * 2.0944) + 1,
+};
+// детерминированный ГПСЧ (кадры должны совпадать при перерендере)
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+
+const DEF = { x: 0, y: 0, s: 1, sx: 1, sy: 1, r: 0, o: 1, b: 0 };
+function apply(el, p) {
+  el.style.transform = `${el.classList.contains('c') ? 'translate(-50%,-50%) ' : ''}translate(${p.x}px,${p.y}px) rotate(${p.r}deg) scale(${p.s * p.sx},${p.s * p.sy})`;
+  el.style.opacity = p.o;
+  if (p.b > .05) el.style.filter = (el.dataset.f || '') + ` blur(${p.b}px)`; else el.style.filter = el.dataset.f || '';
+}
+// ключевые кадры: [[t, {props}, easeДоСледующего], ...]
+const tracks = [];
+function kf(id, keys, extra) { const el = $(id); el.dataset.f = el.style.filter || ''; tracks.push({ el, keys, extra }); }
+function sample(keys, t) {
+  const first = { ...DEF, ...keys[0][1] };
+  if (t <= keys[0][0]) return first;
+  let cur = first;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const [t0, , ez] = keys[i], [t1, p1] = keys[i + 1];
+    const next = { ...cur, ...p1 };
+    if (t < t1) { const k = (E[ez] || E.out)((t - t0) / (t1 - t0)); const o = {}; for (const key in DEF) o[key] = lerp(cur[key], next[key], k); return o; }
+    cur = next;
+  }
+  return cur;
+}
+
+// ---------- сцены и их окна ----------
+const SCENES = [['s1', 0, 3.0], ['s2', 3.0, 6.0], ['s3', 6.0, 10.4], ['s4', 10.4, 16.0], ['s5', 16.0, 18.6], ['s6', 18.6, 23.0], ['s7', 23.0, 99]];
+const per = [];  // покадровые функции (непрерывные эффекты)
+const on = (fn) => per.push(fn);
+const shake = (t, t0, dur, amp, seed = 1) => { const k = clamp((t - t0) / dur); if (k <= 0 || k >= 1) return [0, 0]; const a = amp * (1 - k); return [Math.sin(t * 91 + seed) * a, Math.cos(t * 77 + seed * 3) * a]; };
+
+// --- S1 ---
+(() => {
+  // силуэт города
+  const sky = $('s1sky'); const r = rng(7); let x = -10, html = '';
+  while (x < 1090) { const w = 60 + r() * 90, h = 140 + r() * 300; html += `<rect x="${x}" y="${520 - h}" width="${w}" height="${h}" fill="#E04600" opacity=".55"/>`;
+    for (let wy = 520 - h + 24; wy < 500; wy += 42) for (let wx = x + 14; wx < x + w - 20; wx += 30) if (r() > .35) html += `<rect x="${wx}" y="${wy}" width="14" height="20" fill="#FFB067" opacity=".55"/>`;
+    x += w + 6; }
+  sky.innerHTML = html;
+  kf('s1sky', [[0, { y: 300, o: 0 }, 'out'], [0.6, { y: 0, o: 1 }]]);
+  kf('s1pin', [[0.05, { y: -700, s: .6 }, 'back'], [0.45, { y: 0, s: 1 }, 'lin'], [2.6, { s: 1 }, 'in'], [3.0, { y: -300, o: 0 }]]);
+  kf('s1city', [[0.12, { s: 3.2, o: 0, b: 12 }, 'out'], [0.38, { s: 1, o: 1, b: 0, r: -4 }, 'lin'], [2.6, { s: 1.06 }, 'in'], [3.0, { x: -1300 }]]);
+  kf('s1att', [[1.38, { s: 4, o: 0, b: 16, r: -4 }, 'back'], [1.62, { s: 1, o: 1, b: 0, r: -4 }, 'lin'], [2.6, { s: 1.08 }, 'in'], [3.0, { x: 1300 }]]);
+  kf('s1first', [[1.85, { s: 0, o: 0 }, 'back'], [2.15, { s: 1, o: 1 }, 'lin'], [2.65, {}, 'in'], [3.0, { y: 600, o: 0 }]]);
+  on(t => { $('s1rays').style.transform = `rotate(${t * 18}deg) scale(${1 + t * .05})`;
+    const [sx, sy] = shake(t, 1.6, .45, 26); $('s1').style.transform = `translate(${sx}px,${sy}px)`; });
+})();
+
+// --- S2 ---
+(() => {
+  kf('s2t1', [[3.02, { y: -80, o: 0 }, 'out'], [3.35, { y: 0, o: 1 }]]);
+  kf('s2fridge', [[3.0, { s: .7, o: 0, y: 200 }, 'back'], [3.4, { s: 1, o: 1, y: 0 }, 'lin'], [5.5, { s: 1 }, 'in'], [6.0, { s: 1.6, o: 0 }]]);
+  kf('s2fly', [[4.0, { o: 0, x: 0, y: 0, s: .8 }, 'lin'], [4.2, { o: 1 }, 'lin'], [5.8, { o: 1 }]]);
+  kf('s2t2', [[4.45, { s: 0, o: 0, r: -3 }, 'back'], [4.75, { s: 1, o: 1, r: -3 }, 'lin'], [5.6, { s: 1 }, 'in'], [6.0, { s: 1.3, o: 0 }]]);
+  on(t => {
+    const k = E.out(clamp((t - 3.45) / .55));
+    $('s2door').style.transform = `rotateY(${-118 * k}deg)`;
+    $('s2lamp').style.opacity = t < 3.6 ? 0 : (Math.sin(t * 37) > .85 && t < 4.0 ? .3 : 1);
+    // муха кружит в пустом холодильнике
+    const a = (t - 4) * 4.2; $('s2fly').style.left = (540 + Math.cos(a) * 150 + Math.sin(a * 2.3) * 40) + 'px'; $('s2fly').style.top = (1020 + Math.sin(a * 1.3) * 230) + 'px';
+    const [sx, sy] = shake(t, 5.35, .6, 14, 2); $('s2fridge').style.marginLeft = sx + 'px';
+  });
+})();
+
+// --- S3 ---
+(() => {
+  // взрыв частиц при появлении логотипа
+  const burst = $('s3burst'), r = rng(11), parts = [];
+  const cols = ['#FFFFFF', '#FFD43B', '#2DBE4C', '#FFB067'];
+  for (let i = 0; i < 46; i++) { const d = document.createElement('div'); d.className = 'particle'; const sz = 14 + r() * 34; d.style.width = d.style.height = sz + 'px'; d.style.background = cols[i % 4]; burst.appendChild(d);
+    parts.push({ d, a: r() * Math.PI * 2, v: 500 + r() * 900, sz }); }
+  on(t => { const k = (t - 6.0); parts.forEach(p => { if (k < 0 || k > 1.4) { p.d.style.opacity = 0; return; } const e = E.out(clamp(k / 1.2));
+    p.d.style.opacity = 1 - clamp((k - .7) / .7); p.d.style.transform = `translate(${540 + Math.cos(p.a) * p.v * e - p.sz / 2}px,${760 + Math.sin(p.a) * p.v * e + 400 * k * k - p.sz / 2}px)`; }); });
+  // скоростные линии за рюкзаком
+  const sp = $('s3speed'), r2 = rng(5); let h = '';
+  for (let i = 0; i < 16; i++) { const y = 80 + r2() * 740, x = 760 + r2() * 300, w = 180 + r2() * 360; h += `<rect x="${x}" y="${y}" width="${w}" height="${8 + r2() * 10}" rx="6" fill="#fff" opacity="${.35 + r2() * .5}"/>`; }
+  sp.innerHTML = h;
+
+  kf('s3icon', [[6.0, { s: 0, r: -20 }, 'el'], [6.7, { s: 1, r: 0 }, 'lin'], [7.35, {}, 'io'], [7.8, { s: .42, y: -560, x: -190 }, 'lin'], [10.0, {}, 'in'], [10.4, { o: 0 }]]);
+  kf('s3word', [[6.25, { y: 160, o: 0 }, 'back'], [6.6, { y: 0, o: 1 }, 'lin'], [7.35, {}, 'io'], [7.8, { s: .6, y: -980, x: 140 }, 'lin'], [10.0, {}, 'in'], [10.4, { o: 0 }]]);
+  kf('s3pack', [[7.45, { x: 1300, r: 14, s: .9 }, 'out'], [7.9, { x: 0, r: -4, s: 1 }, 'lin'], [8.85, { r: -4 }, 'io'], [9.25, { x: 300, y: 800, s: .42, r: 6 }, 'lin'], [10.0, {}, 'in'], [10.4, { x: 1200 }]]);
+  kf('s3speed', [[7.45, { x: 1300, o: 0 }, 'out'], [7.9, { x: 260, o: 1 }, 'lin'], [8.4, { x: 200, o: 1 }, 'out'], [8.85, { o: 0 }]]);
+  kf('s3to', [[7.95, { s: 0, o: 0, r: -4 }, 'back'], [8.25, { s: 1, o: 1, r: -4 }, 'lin'], [8.8, {}, 'in'], [9.05, { s: 0, o: 0 }]]);
+  kf('s3watch', [[8.85, { s: 0, r: -30 }, 'back'], [9.25, { s: 1, r: 0 }, 'lin'], [10.05, {}, 'in'], [10.4, { s: 2.2, o: 0 }]]);
+  kf('s3ot', [[9.0, { s: 3, o: 0, b: 10, r: -3 }, 'back'], [9.25, { s: 1, o: 1, b: 0, r: -3 }, 'lin'], [10.05, {}, 'in'], [10.4, { y: -400, o: 0 }]]);
+  kf('s3min', [[9.45, { s: 0, o: 0 }, 'back'], [9.7, { s: 1, o: 1 }, 'lin'], [10.05, {}, 'in'], [10.4, { y: 400, o: 0 }]]);
+  on(t => {
+    $('s3rays').style.transform = `rotate(${t * 14}deg)`;
+    // стрелка секундомера: с 60 до 15 минут
+    const k = E.io(clamp((t - 9.0) / .9));
+    $('s3num').textContent = Math.round(lerp(60, 15, k));
+    $('s3arc').setAttribute('stroke-dashoffset', 678.6 * (1 - lerp(1, .25, k)));
+    const [sx, sy] = shake(t, 6.0, .35, 22, 4); $('s3').style.transform = `translate(${sx}px,${sy}px)`;
+  });
+})();
+
+// --- S4 ---
+(() => {
+  kf('s4bag', [[10.4, { y: 1200, r: 8 }, 'back'], [10.85, { y: 0, r: 0 }, 'lin'], [15.6, { s: 1.04 }, 'in'], [16.0, { x: -1300, r: -10 }]]);
+  const chips = [['s4c1', 10.5], ['s4c2', 11.3], ['s4c3', 11.83], ['s4c4', 12.75]];
+  chips.forEach(([id, t0], i) => kf(id, [[t0, { x: -600, r: -6 }, 'back'], [t0 + .3, { x: 0, r: -3 }, 'lin'], [13.55 + i * .04, {}, 'in'], [13.85 + i * .04, { x: -900 }]]));
+  kf('s4food', [[13.6, { y: 900 }, 'back'], [14.0, { y: 0 }, 'lin'], [15.6, {}, 'in'], [16.0, { x: -1300 }]]);
+  kf('s4brands', [[13.9, { y: 500 }, 'out'], [14.3, { y: 0 }, 'lin'], [15.6, {}, 'in'], [16.0, { x: -1300 }]]);
+  kf('s4price', [[13.7, { s: 3.2, o: 0, b: 12, r: -4 }, 'back'], [14.0, { s: 1, o: 1, b: 0, r: -4 }, 'lin'], [15.6, { s: 1.06, r: -4 }, 'in'], [16.0, { x: -1300 }]]);
+  on(t => { $('s4rays').style.transform = `rotate(${-t * 12}deg)`; const [sx, sy] = shake(t, 13.95, .3, 16, 5); $('s4').style.transform = `translate(${sx}px,${sy}px)`;
+    $('s4bag').style.marginTop = Math.sin(t * 2.4) * 10 + 'px'; });
+})();
+
+// --- S5 ---
+(() => {
+  kf('s5t', [[16.0, { y: -300, o: 0 }, 'back'], [16.35, { y: 0, o: 1 }, 'lin'], [18.3, {}, 'in'], [18.6, { y: -400 }]]);
+  kf('s5phone', [[16.0, { y: 1200, r: 12 }, 'out'], [16.5, { y: 0, r: -3 }, 'lin'], [18.3, { s: 1.04 }, 'in'], [18.6, { y: 1400, r: 8 }]]);
+  [['s5tap1', 's5p1', 16.75], ['s5tap2', 's5p2', 17.35]].forEach(([tap, plus, t0]) => {
+    kf(tap, [[t0, { s: .3, o: 0 }, 'lin'], [t0 + .05, { s: .5, o: 1 }, 'out'], [t0 + .45, { s: 1.4, o: 0 }]]);
+    kf(plus, [[t0 + .05, { s: 0, o: 0 }, 'back'], [t0 + .25, { s: 1, o: 1 }, 'in'], [t0 + .8, { s: .5, o: 0, y: -260, x: 120 }]]);
+  });
+  on(t => $('s5rays').style.transform = `rotate(${t * 12}deg)`);
+})();
+
+// --- S6 ---
+(() => {
+  const conf = $('s6conf'), r = rng(23), cs = [];
+  const cols = ['#FFFFFF', '#FFD43B', '#2DBE4C', '#FFB067', '#FF3D00'];
+  for (let i = 0; i < 90; i++) { const d = document.createElement('div'); d.className = 'particle'; d.style.borderRadius = '4px'; d.style.width = (14 + r() * 16) + 'px'; d.style.height = (24 + r() * 20) + 'px'; d.style.background = cols[i % 5]; conf.appendChild(d);
+    cs.push({ d, x: r() * 1080, vy: 380 + r() * 520, vx: (r() - .5) * 300, rot: r() * 720, delay: r() * .5 }); }
+  on(t => { const k0 = t - 18.6; cs.forEach(c => { const k = k0 - c.delay; if (k < 0 || t > 23) { c.d.style.opacity = 0; return; }
+    c.d.style.opacity = 1; c.d.style.transform = `translate(${c.x + c.vx * k + Math.sin(k * 5 + c.x) * 30}px,${-60 + c.vy * k}px) rotate(${c.rot * k}deg)`; }); });
+  kf('s6first', [[18.72, { y: -200, s: 2.4, o: 0, b: 10 }, 'back'], [19.0, { y: -200, s: 1.12, o: 1, b: 0 }, 'lin'], [19.95, { y: -200, s: 1.18 }, 'io'], [20.25, { y: 0, s: 1 }, 'lin'], [22.7, {}, 'in'], [23.0, { y: 900 }]]);
+  kf('s6sale', [[20.1, { s: 0, o: 0, r: -4 }, 'back'], [20.35, { s: 1, o: 1, r: -4 }, 'lin'], [22.7, {}, 'in'], [23.0, { y: -600 }]]);
+  kf('s6sum', [[20.62, { s: 4, o: 0, b: 16, r: -5 }, 'back'], [20.9, { s: 1, o: 1, b: 0, r: -5 }, 'lin'], [22.7, { s: 1.08, r: -5 }, 'in'], [23.0, { s: 3, o: 0 }]]);
+  kf('s6coupon', [[21.55, { s: 2.5, o: 0, r: 8 }, 'back'], [21.8, { s: 1, o: 1, r: -2 }, 'lin'], [22.7, {}, 'in'], [23.0, { y: 900 }]]);
+  kf('s6note', [[21.9, { o: 0, y: 40 }, 'out'], [22.2, { o: .95, y: 0 }, 'lin'], [22.7, {}, 'in'], [23.0, { y: 900 }]]);
+  on(t => { $('s6rays').style.transform = `rotate(${t * 16}deg)`; const [sx, sy] = shake(t, 20.85, .35, 20, 6); const [a, b] = shake(t, 21.75, .3, 14, 7);
+    $('s6').style.transform = `translate(${sx + a}px,${sy + b}px)`; });
+})();
+
+// --- S7 ---
+(() => {
+  kf('s7icon', [[23.0, { s: 0, r: -20 }, 'back'], [23.35, { s: 1, r: 0 }]]);
+  kf('s7word', [[23.1, { x: 300, o: 0 }, 'out'], [23.45, { x: 0, o: 1 }]]);
+  kf('s7t', [[23.2, { s: 2.6, o: 0, b: 10 }, 'back'], [23.5, { s: 1, o: 1, b: 0 }]]);
+  kf('s7phone', [[23.5, { y: 1100, r: 10 }, 'out'], [24.0, { y: 0, r: -4 }]]);
+  kf('s7gp', [[24.55, { s: 0 }, 'back'], [24.85, { s: 1 }]]);
+  kf('s7as', [[24.7, { s: 0 }, 'back'], [25.0, { s: 1 }]]);
+  kf('s7coupon', [[25.2, { y: 300, o: 0 }, 'back'], [25.55, { y: 0, o: 1, r: -2 }]]);
+  kf('s7city', [[25.5, { o: 0 }, 'out'], [25.9, { o: 1 }]]);
+  on(t => { $('s7rays').style.transform = `rotate(${t * 10}deg)`;
+    if (t > 24.0) $('s7phone').style.marginTop = Math.sin((t - 24) * 3) * 12 + 'px';
+    const pulse = t > 25.0 ? 1 + .05 * Math.max(0, Math.sin((t - 25) * 6)) : 1;
+    $('s7gp').style.scale = $('s7as').style.scale = pulse; });
+})();
+
+// вспышки на стыках сцен
+const FLASH = [[6.0, .9], [10.4, .5], [18.6, .6], [23.0, .5]];
+
+function render(t) {
+  SCENES.forEach(([id, a, b]) => $(id).style.visibility = (t >= a && t < b) ? 'visible' : 'hidden');
+  tracks.forEach(tr => apply(tr.el, sample(tr.keys, t)));
+  per.forEach(fn => fn(t));
+  let f = 0; FLASH.forEach(([t0, a]) => { const k = t - t0; if (k >= 0 && k < .35) f = Math.max(f, a * (1 - k / .35)); });
+  $('flash').style.opacity = f;
+}
+window.render = render;
+window.DURATION = 28.0;
+render(0);
+</script>
+</body>
+</html>
